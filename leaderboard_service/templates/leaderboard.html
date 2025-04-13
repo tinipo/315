@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Таблица лидеров</title>
+</head>
+<body>
+  <h1>Таблица лидеров</h1>
+  <table border="1" cellspacing="0" cellpadding="5">
+    <tr>
+      <th>Имя пользователя</th>
+      <th>High Score</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.username }}</td>
+      <td>{{ user.high_score }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <br>
+  <a href="http://localhost:5000">Главная страница игры</a>
+</body>
+</html>

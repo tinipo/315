@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Главная игры</title>
+    <!-- Подключаем Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #e9ecef;
+            padding-top: 50px;
+        }
+        .home-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container home-container">
+        <h1 class="mb-4">Добро пожаловать в CPS-игру</h1>
+        {% if session.username %}
+            <p>Вы вошли как <strong>{{ session.username }}</strong>. <a href="{{ url_for('logout') }}">Выйти</a></p>
+            <a href="{{ url_for('game') }}" class="btn btn-success mb-2">Начать игру</a>
+            <br>
+            <a href="http://localhost:5001/profile" class="btn btn-info mb-2">Профиль</a>
+            <br>
+            <a href="http://localhost:5002" class="btn btn-warning mb-2">Таблица лидеров</a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Войти</a>
+        {% endif %}
+    </div>
+</body>
+</html>
