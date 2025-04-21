@@ -1,7 +1,5 @@
-# leaderboard_service/app.py
 from flask import Flask, render_template
 from common.database import SessionLocal
-# Импорт моделей – можно либо повторно определить, либо импортировать из account_service (убедитесь, что PYTHONPATH настроен)
 from account_service.models import User
 
 app = Flask(__name__)

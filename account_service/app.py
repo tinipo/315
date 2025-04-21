@@ -1,18 +1,15 @@
-# account_service/app.py
 from flask import Flask, render_template, request, redirect, url_for, session
 from common.database import engine, SessionLocal
-from models import Base, User, GameResult
-from common.broker import consume_game_results
+from account_service.models import Base, User, GameResult
+from common.broker import publish_game_result
 import threading
 import json
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 
-# Создаём таблицы, если их ещё нет
 Base.metadata.create_all(bind=engine)
 
-# Callback для обработки результатов игры, полученных через RabbitMQ
 def game_result_callback(ch, method, properties, body):
     data = json.loads(body)
     username = data.get("username")
@@ -20,14 +17,11 @@ def game_result_callback(ch, method, properties, body):
     db = SessionLocal()
     user = db.query(User).filter(User.username == username).first()
     if user:
-        # Записываем новый результат игры
         game_result = GameResult(score=score, owner=user)
         db.add(game_result)
         db.commit()
-        # Обновляем high score
         if score > user.high_score:
             user.high_score = score
-        # Вычисляем среднее значение
         games = db.query(GameResult).filter(GameResult.user_id == user.id).all()
         if games:
             user.average_score = sum(g.score for g in games) / len(games)
@@ -36,9 +30,8 @@ def game_result_callback(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def start_consumer():
-    consume_game_results(game_result_callback)
+    publish_game_result(game_result_callback)
 
-# Запускаем RabbitMQ консьюмера в отдельном потоке
 consumer_thread = threading.Thread(target=start_consumer, daemon=True)
 consumer_thread.start()
 
